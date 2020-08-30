@@ -1,16 +1,23 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/maogou/ginapi/routes"
+	"net/http"
+	"time"
 )
 
 func main() {
 
-	r := gin.Default()
+	router := routes.NewRouter()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200,gin.H{
-			"message":"Hello ginapi",
-		})
-	})
+	//自定义serve
+	serve := &http.Server{
+		Addr: ":8080",
+		Handler: router,
+		ReadTimeout: 10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	serve.ListenAndServe()
 }

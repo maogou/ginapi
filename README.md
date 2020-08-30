@@ -1,6 +1,7 @@
 ### GinApi项目目录说明
 
 - app 主要存放控制器-model-模板-service等
+    - handler 相当于控制器
     - middleware 中间件
     - model 模型
     - service 共用服务
