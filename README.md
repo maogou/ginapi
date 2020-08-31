@@ -12,7 +12,7 @@
 - global 全局的变量
 - pkg 项目用的包
     - 错误码标准化 errcode
-    - 配置管理
+    - 配置管理 setting
     - 数据库连接
 - storage 日志文件存放的目录
 - public 静态资源文件
