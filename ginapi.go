@@ -13,7 +13,12 @@ import (
 func init()  {
 	err := bootstrap.InitSetting()
 	if err != nil {
-		log.Fatalf("bootstrap.SetupSetting err: %v",err)
+		log.Fatalf("bootstrap.InitSetting err: %v",err)
+	}
+
+	err = bootstrap.InitLogger()
+	if err != nil {
+		log.Fatalf("bootstrap.InitLogger: %v",err)
 	}
 }
 

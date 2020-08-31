@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/jinzhu/gorm v1.9.16 // indirect
+	github.com/jinzhu/gorm v1.9.16
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/magiconair/properties v1.8.2 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
@@ -22,5 +22,6 @@ require (
 	golang.org/x/sys v0.0.0-20200828194041-157a740278f4 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ini.v1 v1.60.2 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

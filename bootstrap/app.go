@@ -3,7 +3,10 @@ package bootstrap
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/maogou/ginapi/app/model"
+	"github.com/maogou/ginapi/pkg/logger"
 	"github.com/maogou/ginapi/pkg/setting"
+	"gopkg.in/natefinch/lumberjack.v2"
+	"log"
 	"time"
 )
 
@@ -13,6 +16,7 @@ var (
 	AppSetting *setting.AppSettingS
 	DatabaseSetting *setting.DatabaseSettingS
 	DBEngine *gorm.DB
+	Logger *logger.Logger
 )
 
 //初始化配置
@@ -53,6 +57,17 @@ func InitDBEngine() error  {
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func InitLogger() error  {
+	Logger = logger.NewLogger(&lumberjack.Logger{
+		Filename: AppSetting.LogSavePath + "/" + AppSetting.LogFileName + AppSetting.LogFileExt,
+		MaxSize: 600, //600M
+		MaxAge: 10, //10天
+		LocalTime: true, //使用本地时间格式
+	},"",log.LstdFlags).WithCaller(2)
 
 	return nil
 }
