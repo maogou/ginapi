@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/maogou/ginapi/bootstrap"
+	"github.com/maogou/ginapi/global"
 	"github.com/maogou/ginapi/pkg/setting"
-	"time"
 )
 
 //所有model的公共属性
@@ -20,6 +19,7 @@ type Model struct {
 	IsDel      uint8  `json:"is_del"`
 }
 
+//实例化db
 func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 	db, err := gorm.Open(databaseSetting.DBType, fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local",
@@ -36,12 +36,12 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 	}
 
 	//开启sql日志
-	if bootstrap.ServeSetting.RunMode == "debug" {
+	if global.ServeSetting.RunMode == "debug" {
 		db.LogMode(true)
 	}
 
 	db.SingularTable(true)
-	db.DB().SetConnMaxIdleTime(time.Duration(databaseSetting.MaxIdleConns))
+	db.DB().SetMaxIdleConns(databaseSetting.MaxIdleConns)
 	db.DB().SetMaxOpenConns(databaseSetting.MaxOpenConns)
 
 	return db, nil
