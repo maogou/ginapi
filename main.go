@@ -34,7 +34,10 @@ func init() {
 	}
 }
 
-//应用主入口
+//@title GinApi文档
+//@version 1.0
+//@description 使用gin框架开发api接口
+//@termOfService https://juluzhizhan.com
 func main() {
 	//设置运行模式
 	gin.SetMode(global.ServeSetting.RunMode)

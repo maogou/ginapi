@@ -9,6 +9,39 @@
 - config 配置文件
 - routes 路由
 - docs api的接口文档地址
+    - swagger 工具安装
+        - go get -u github.com/swaggo/swag/cmd/swag
+        - go get -u github.com/swaggo/gin-swagger
+        - go get -u github.com/swaggo/files
+        - go get -u github.com/alecthomas/template
+    - 验证swag 是否安装成功
+        - swag -v 
+    - Swag 注解常用标识说明
+          
+          | 注解       |描述   | 
+          | --------  | -----:  | 
+          | @Summary  |摘要   |  
+          | @Produce  |API可以产生的MIME类型列表,可以理解为响应的类型  | 
+          | @Param    |参数格式,从左到右分别:参数名,入参类型,数据类型,是否必填和注释 |  
+          | @Success  |成功响应,从左到右分别:参数名,入参类型,数据类型和注释 | 
+          | @Failure  |失败响应,从左到右分别:参数名,入参类型,数据类型和注释 | 
+          | @Router   |路由,从左到右分别:路由地址和HTTP方法 | 
+     
+    - 注册swag路由
+        - 导入对应的包
+            - _ "github.com/maogou/ginapi/docs"
+            - 	swaggerFiles "github.com/swaggo/files"
+            - 	ginSwagger "github.com/swaggo/gin-swagger" 
+        - 配置路由
+            - url := ginSwagger.URL("http://127.0.0.1:8080/swagger/doc.json")
+            - router.GET("/swagger/*any",ginSwagger.WrapHandler(swaggerFiles.Handler))    
+     
+    - 生成文档 swag init   
+    
+    - 访问文档 
+        - http://xxxx:8000/swagger/index.html   
+          
+             
 - global 全局的变量
 - pkg 项目用的包
     - 错误码标准化 errcode
