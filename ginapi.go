@@ -98,6 +98,7 @@ func initDBEngine() error  {
 	return nil
 }
 
+//初始化日志服务
 func initLogger() error  {
 	global.Logger = logger.NewLogger(&lumberjack.Logger{
 		Filename:  global.AppSetting.LogSavePath + "/" + global.AppSetting.LogFileName + global.AppSetting.LogFileExt,
