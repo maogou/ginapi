@@ -1,0 +1,1 @@
+2020/09/02 22:44:33 {"callers":["/Users/maogou/work/codes/ginapi/main.go: 25 main.init.0"],"level":"error","message":"State必须是[0 1]中的一个","time":1599057873812476000}

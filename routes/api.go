@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	v1 "github.com/maogou/ginapi/app/handler/api/v1"
+	"github.com/maogou/ginapi/app/middleware"
 
 	_ "github.com/maogou/ginapi/docs"
 	swaggerFiles "github.com/swaggo/files"
@@ -13,6 +14,8 @@ func NewRouter() *gin.Engine  {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	//使用多语言翻译(验证器)中间件
+	router.Use(middleware.Translations())
 
 	//配置swagger文档
 	//url := ginSwagger.URL("http://127.0.0.1:8080/swagger/doc.json")
