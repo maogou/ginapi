@@ -107,7 +107,7 @@ func (l *Logger) WithCaller(skip int) *Logger  {
 func (l *Logger) WithCallersFrames() *Logger  {
 	maxCallerDepth := 25
 	minCallerDepth := 1
-	callers := []string{}
+	var callers []string
 	pcs := make([]uintptr,maxCallerDepth)
 	depth := runtime.Callers(minCallerDepth,pcs)
 	frames := runtime.CallersFrames(pcs[:depth])
@@ -128,7 +128,7 @@ func (l *Logger) WithCallersFrames() *Logger  {
 func (l *Logger) JSONFormat(level Level, message string) map[string]interface{} {
 	data := make(Fields, len(l.fields)+4)
 	data["level"] = level.String()
-	data["time"] = time.Now().Local().UnixNano()
+	data["time"] = time.Now().Local().Format("2006-01-02 15:04:05")
 	data["message"] = message
 	data["callers"] = l.callers
 	if len(l.fields) > 0 {
@@ -162,7 +162,7 @@ func (l *Logger) Output(level Level, message string) {
 }
 
 func (l *Logger) Debug(ctx context.Context, v ...interface{}) {
-	l.WithLevel(LevelDebug).Output(LevelDebug,fmt.Sprint(v...))
+	l.WithContext(ctx).Output(LevelDebug,fmt.Sprint(v...))
 }
 
 func (l *Logger) Debugf(ctx context.Context, format string, v ...interface{}) {
