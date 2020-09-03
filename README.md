@@ -3,7 +3,16 @@
 - app 主要存放控制器-model-模板-service等
     - handler 相当于控制器
     - middleware 中间件
-    - model 模型
+    - model 模型 
+        - 更多用法 https://gorm.io/zh_CN/ 
+        - Model 指定运行DB操作模型实例,默认解析该结构体的名字为表名,格式大写驼峰转小写下划线驼峰,也可以使用TableName方法手动指定表名
+        - Where 设置搜索条件,可以接受map,struct,string作为条件
+        - Offset 偏移量
+        - Limit 搜索的条数
+        - Find 查找符合条件的所有记录[多条]
+        - Updates 更新所选字段
+        - Delete 删除数据
+        - Count 统计总条数
     - service 共用服务
     - dao 模型的抽象层
 - config 配置文件
