@@ -42,22 +42,22 @@ func (d *Dao) GetTagList(name string, state uint8, page, pageSize int) ([]*model
 
 //更新tag
 func (d *Dao) UpdateTag(id uint32, name string, state uint8, modifiedBy string) error {
+	//说明 因为gorm包分不清post传递过来的state =0 是不是要真实修改的状态值
+	//再加上 int的默认值也是 0 所以再更新的时候需要手动定义一个map来做更新操作
 	tag := model.Tag{
 		Model: &model.Model{
 			ID: id,
 		},
 	}
-
 	values := map[string]interface{}{
-		"state":       state,
-		"modified_by": modifiedBy,
+		"state":state,
+		"modified_by":modifiedBy,
 	}
-
-	if name != "" {
+	if name != ""{
 		values["name"] = name
 	}
 
-	return tag.Update(d.engine, values)
+	return tag.Update(d.engine,values)
 }
 
 //删除标签
