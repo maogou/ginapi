@@ -72,5 +72,5 @@ func (t Tag)Update(db *gorm.DB,values interface{})error  {
 
 //删除标签
 func (t Tag)Delete(db *gorm.DB) error  {
-	return db.Where("id = AND is_del = ?",t.Model.ID,0).Delete(&t).Error
+	return db.Where("id = ?  AND is_del = ?",t.Model.ID,0).Delete(&t).Error
 }

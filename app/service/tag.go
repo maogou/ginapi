@@ -23,14 +23,14 @@ type CreateTagRequest struct {
 //更新tag的参数验证
 type UpdateTagRequest struct {
 	ID         uint32 `form:"id" binding:"required,gte=1"`
-	Name       string `form:"name" binding:"min=3,max=100"`
+	Name       string `form:"name" binding:"max=100"`
 	State      uint8  `form:"state" binding:"required,oneof=0 1"`
 	ModifiedBy string `form:"modified_by" binding:"required,min=3,max=100"`
 }
 
 //删除tag的参数验证
 type DeleteTagRequest struct {
-	ID uint32 `form:"id" binding:"required,get=1"`
+	ID uint32 `form:"id" binding:"required,gte=1"`
 }
 
 type TagListRequest struct {
