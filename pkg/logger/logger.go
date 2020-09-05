@@ -24,7 +24,7 @@ const (
 )
 
 //设置日志等级
-func (l Level) String() string  {
+func (l Level) String() string {
 	switch l {
 	case LevelDebug:
 		return "debug"
@@ -45,37 +45,37 @@ func (l Level) String() string  {
 
 type Logger struct {
 	newLogger *log.Logger
-	ctx context.Context
-	level Level
-	fields Fields
-	callers []string
+	ctx       context.Context
+	level     Level
+	fields    Fields
+	callers   []string
 }
 
-func NewLogger(w io.Writer,prefix string,flag int) *Logger  {
-	l := log.New(w,prefix,flag)
+func NewLogger(w io.Writer, prefix string, flag int) *Logger {
+	l := log.New(w, prefix, flag)
 
 	return &Logger{newLogger: l}
 }
 
-func (l *Logger) clone () *Logger{
+func (l *Logger) clone() *Logger {
 	nl := *l
 	return &nl
 }
 
-func (l *Logger) WithLevel(lvl Level) *Logger{
+func (l *Logger) WithLevel(lvl Level) *Logger {
 	ll := l.clone()
 	ll.level = lvl
 	return ll
 }
 
 //设置日志公共字段
-func (l *Logger) WithFields(f Fields) *Logger  {
+func (l *Logger) WithFields(f Fields) *Logger {
 	ll := l.clone()
 	if ll.fields == nil {
 		ll.fields = make(Fields)
 	}
 
-	for k,v := range f {
+	for k, v := range f {
 		ll.fields[k] = v
 	}
 
@@ -83,7 +83,7 @@ func (l *Logger) WithFields(f Fields) *Logger  {
 }
 
 //设置日志上下文属性
-func (l *Logger) WithContext(ctx context.Context) *Logger  {
+func (l *Logger) WithContext(ctx context.Context) *Logger {
 	ll := l.clone()
 	ll.ctx = ctx
 
@@ -91,29 +91,29 @@ func (l *Logger) WithContext(ctx context.Context) *Logger  {
 }
 
 //设置当前某一层调用栈的信息(程序计数器,文件信息和行号)
-func (l *Logger) WithCaller(skip int) *Logger  {
+func (l *Logger) WithCaller(skip int) *Logger {
 	ll := l.clone()
-	pc,file,line,ok := runtime.Caller(skip)
+	pc, file, line, ok := runtime.Caller(skip)
 
 	if ok {
 		f := runtime.FuncForPC(pc)
-		ll.callers = []string{fmt.Sprintf("%s: %d %s",file,line,f.Name())}
+		ll.callers = []string{fmt.Sprintf("%s: %d %s", file, line, f.Name())}
 	}
 
 	return ll
 }
 
 //设置当前的整个调用栈的信息
-func (l *Logger) WithCallersFrames() *Logger  {
+func (l *Logger) WithCallersFrames() *Logger {
 	maxCallerDepth := 25
 	minCallerDepth := 1
 	var callers []string
-	pcs := make([]uintptr,maxCallerDepth)
-	depth := runtime.Callers(minCallerDepth,pcs)
+	pcs := make([]uintptr, maxCallerDepth)
+	depth := runtime.Callers(minCallerDepth, pcs)
 	frames := runtime.CallersFrames(pcs[:depth])
 
-	for frame,more := frames.Next();more;frame,more = frames.Next(){
-		callers = append(callers,fmt.Sprintf("%s: %d %s",frame.File,frame.Line,frame.Function))
+	for frame, more := frames.Next(); more; frame, more = frames.Next() {
+		callers = append(callers, fmt.Sprintf("%s: %d %s", frame.File, frame.Line, frame.Function))
 
 		if !more {
 			break
@@ -162,7 +162,7 @@ func (l *Logger) Output(level Level, message string) {
 }
 
 func (l *Logger) Debug(ctx context.Context, v ...interface{}) {
-	l.WithContext(ctx).Output(LevelDebug,fmt.Sprint(v...))
+	l.WithContext(ctx).Output(LevelDebug, fmt.Sprint(v...))
 }
 
 func (l *Logger) Debugf(ctx context.Context, format string, v ...interface{}) {
@@ -208,5 +208,3 @@ func (l *Logger) Panic(ctx context.Context, v ...interface{}) {
 func (l *Logger) Panicf(ctx context.Context, format string, v ...interface{}) {
 	l.WithContext(ctx).Output(LevelPanic, fmt.Sprintf(format, v...))
 }
-
-

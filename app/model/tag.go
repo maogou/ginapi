@@ -67,7 +67,7 @@ func (t Tag)Create(db *gorm.DB) error  {
 
 //更新标签
 func (t Tag)Update(db *gorm.DB,values interface{})error  {
-	return db.Model(&t).Where("id = ? AND is_del = ?",t.ID,0).Updates(&t).Error
+	return db.Model(&t).Where("id = ? AND is_del = ?",t.ID,0).Updates(values).Error
 }
 
 //删除标签

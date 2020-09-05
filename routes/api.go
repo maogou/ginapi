@@ -10,7 +10,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewRouter() *gin.Engine  {
+func NewRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
@@ -19,7 +19,7 @@ func NewRouter() *gin.Engine  {
 
 	//配置swagger文档
 	//url := ginSwagger.URL("http://127.0.0.1:8080/swagger/doc.json")
-	router.GET("/swagger/*any",ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	article := v1.Article{}
 	tag := v1.Tag{}
@@ -27,24 +27,24 @@ func NewRouter() *gin.Engine  {
 	v1 := router.Group("/api/v1")
 	{
 		// 创建标签
-		v1.POST("/tags",tag.Create)
+		v1.POST("/tags", tag.Create)
 		// 删除指定标签
-		v1.DELETE("/tags/:id",tag.Delete)
+		v1.DELETE("/tags/:id", tag.Delete)
 		// 更新指定标签
-		v1.PUT("/tags/:id",tag.Update)
+		v1.PUT("/tags/:id", tag.Update)
 		// 获取标签列表
-		v1.GET("/tags",tag.List)
+		v1.GET("/tags", tag.List)
 
 		// 创建文章
-		v1.POST("/articles",article.Create)
+		v1.POST("/articles", article.Create)
 		// 删除指定文章
-		v1.DELETE("/articles/:id",article.Delete)
+		v1.DELETE("/articles/:id", article.Delete)
 		// 更新指定文章
-		v1.PUT("/articles/:id",article.Update)
+		v1.PUT("/articles/:id", article.Update)
 		// 获取指定文章
-		v1.GET("/articles/:id",article.Get)
+		v1.GET("/articles/:id", article.Get)
 		// 获取文章列表
-		v1.GET("/articles",article.List)
+		v1.GET("/articles", article.List)
 	}
 
 	return router

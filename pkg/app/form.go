@@ -8,56 +8,55 @@ import (
 )
 
 type ValidError struct {
-	Key string
+	Key     string
 	Message string
 }
 
 type ValidErrors []*ValidError
 
 //实现了error接口-golang规定只要实现了接口的方法就实现了该接口
-func (v ValidError) Error() string  {
+func (v ValidError) Error() string {
 	return v.Message
 }
 
-func (v ValidErrors) Errors() []string  {
+func (v ValidErrors) Errors() []string {
 	var errs []string
-	for _,err := range v {
-		errs = append(errs,err.Error())
+	for _, err := range v {
+		errs = append(errs, err.Error())
 	}
 
 	return errs
 }
 
 //实现了error接口
-func (v ValidErrors) Error() string  {
-	return strings.Join(v.Errors(),",")
+func (v ValidErrors) Error() string {
+	return strings.Join(v.Errors(), ",")
 }
 
 //绑定并验证翻译错误信息
-func BindAndValid(c *gin.Context,v interface{}) (bool,ValidErrors)  {
+func BindAndValid(c *gin.Context, v interface{}) (bool, ValidErrors) {
 	var errs ValidErrors
 
 	err := c.ShouldBind(v)
+
 	if err != nil {
 		v := c.Value("trans")
-		trans,_ := v.(ut.Translator)
-		verres,ok := err.(validator.ValidationErrors)
+		trans, _ := v.(ut.Translator)
+		verres, ok := err.(validator.ValidationErrors)
 		if !ok {
-			return true,nil
+			return false, nil
 		}
 
-		for key,value := range verres.Translate(trans) {
-			errs = append(errs,&ValidError{
-				Key: key,
+		for key, value := range verres.Translate(trans) {
+			errs = append(errs, &ValidError{
+				Key:     key,
 				Message: value,
 			})
 		}
 
-		return true,errs
+		return false, errs
 	}
 
-	return false,nil
+	return true, nil
 
 }
-
-

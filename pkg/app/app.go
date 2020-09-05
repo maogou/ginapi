@@ -19,45 +19,74 @@ type Page struct {
 	TotalRows int `json:"total_rows"`
 }
 
+type SuccessList struct {
+	List  interface{} `json:"list"`
+	Pager Page        `json:"pager"`
+}
+
 //实例化Response
-func NewResponse(ctx *gin.Context) *Response  {
+func NewResponse(ctx *gin.Context) *Response {
 	return &Response{
 		Ctx: ctx,
 	}
 }
 
-//响应正常json
-func (r *Response) ToResponse(data interface{})  {
+//响应修改-创建-删除等操作的json
+func (r *Response) ToResponseMsg(msg string) {
+	success := errcode.Success
+	response := gin.H{
+		"code": success.Code(),
+		"msg":  msg,
+	}
+
+	r.Ctx.JSON(http.StatusOK, response)
+}
+
+//响应单条正常json
+func (r *Response) ToResponse(data interface{}) {
+	success := errcode.Success
 	if data == nil {
 		data = gin.H{}
 	}
+	response := gin.H{
+		"code": success.Code(),
+		"msg":  success.Msg(),
+		"data": data,
+	}
 
-	r.Ctx.JSON(http.StatusOK,data)
+	r.Ctx.JSON(http.StatusOK, response)
 }
 
-//响应分页json
-func (r *Response) ToResponseList(list interface{},totalRows int)  {
-	r.Ctx.JSON(http.StatusOK,gin.H{
-		"list":list,
-		"pager":Page{
-			Page:GetPage(r.Ctx),
-			PageSize: GetPageSize(r.Ctx),
-			TotalRows: totalRows,
+//响应多条分页json
+func (r *Response) ToResponseList(list interface{}, totalRows int) {
+	success := errcode.Success
+	response := gin.H{
+		"code": success.Code(),
+		"msg":  success.Msg(),
+		"data": SuccessList{
+			List: list,
+			Pager: Page{
+				Page:      GetPage(r.Ctx),
+				PageSize:  GetPageSize(r.Ctx),
+				TotalRows: totalRows,
+			},
 		},
-	})
+	}
+
+	r.Ctx.JSON(http.StatusOK, response)
 }
 
 //错误响应
-func (r *Response) ToErrorResponse(err *errcode.Error)  {
+func (r *Response) ToErrorResponse(err *errcode.Error) {
 	response := gin.H{
-		"code":err.Code(),
-		"msg":err.Msg(),
+		"code": err.Code(),
+		"msg":  err.Msg(),
 	}
 
 	details := err.Details()
 	if len(details) > 0 {
-		response["details"] = details
+		response["error"] = details
 	}
 
-	r.Ctx.JSON(err.StatusCode(),response)
+	r.Ctx.JSON(err.StatusCode(), response)
 }
