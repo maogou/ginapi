@@ -17,24 +17,25 @@ import (
 func init() {
 	//初始化配置
 	err := initSetting()
-	if err !=nil {
-		log.Fatalf("init.initSetting err: %v",err)
+	if err != nil {
+		log.Fatalf("init.initSetting err: %v", err)
 	}
 
 	//初始化日志
 	err = initLogger()
 	if err != nil {
-		log.Fatalf("init.initLogger err: %v",err)
+		log.Fatalf("init.initLogger err: %v", err)
 	}
 
 	//初始化db
 	err = initDBEngine()
 	if err != nil {
-		log.Fatalf("init.initDBEngine err: %v",err)
+		log.Fatalf("init.initDBEngine err: %v", err)
 	}
 }
 
 //@title GinApi文档
+
 //@version 1.0
 //@description 使用gin框架开发api接口
 //@termOfService https://juluzhizhan.com
@@ -48,10 +49,10 @@ func main() {
 
 	//自定义serve
 	serve := &http.Server{
-		Addr: httpPort,
-		Handler: router,
-		ReadTimeout: 10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		Addr:           httpPort,
+		Handler:        router,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
@@ -60,24 +61,24 @@ func main() {
 }
 
 //初始化配置
-func initSetting() error  {
-	setting,err := setting.NewSetting()
+func initSetting() error {
+	setting, err := setting.NewSetting()
 
 	if err != nil {
 		return err
 	}
 
-	err = setting.ReadSection("Server",&global.ServeSetting)
+	err = setting.ReadSection("Server", &global.ServeSetting)
 	if err != nil {
 		return err
 	}
 
-	err = setting.ReadSection("App",&global.AppSetting)
+	err = setting.ReadSection("App", &global.AppSetting)
 	if err != nil {
 		return err
 	}
 
-	err = setting.ReadSection("Database",&global.DatabaseSetting)
+	err = setting.ReadSection("Database", &global.DatabaseSetting)
 	if err != nil {
 		return err
 	}
@@ -89,10 +90,10 @@ func initSetting() error  {
 }
 
 //实例化db引擎
-func initDBEngine() error  {
+func initDBEngine() error {
 	var err error
 
-	global.DBEngine,err = model.NewDBEngine(global.DatabaseSetting)
+	global.DBEngine, err = model.NewDBEngine(global.DatabaseSetting)
 
 	if err != nil {
 		return err
@@ -102,15 +103,13 @@ func initDBEngine() error  {
 }
 
 //初始化日志服务
-func initLogger() error  {
+func initLogger() error {
 	global.Logger = logger.NewLogger(&lumberjack.Logger{
 		Filename:  global.AppSetting.LogSavePath + "/" + global.AppSetting.LogFileName + global.AppSetting.LogFileExt,
-		MaxSize:   600, //600M
-		MaxAge:    10, //10天
+		MaxSize:   600,  //600M
+		MaxAge:    10,   //10天
 		LocalTime: true, //使用本地时间格式
-	},"",log.LstdFlags).WithCaller(2)
+	}, "", log.LstdFlags).WithCaller(2)
 
 	return nil
 }
-
-

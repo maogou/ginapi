@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+const (
+	STATE_OPEN  = 1
+	STATE_CLOSE = 0
+)
+
 //所有model的公共属性
 type Model struct {
 	ID         uint32 `gorm:"primary_key" json:"id"`
@@ -43,9 +48,9 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 
 	db.SingularTable(true)
 	//替换现有回调的顺序
-	db.Callback().Create().Replace("gorm:update_time_stamp",updateTimeStampForCreateCallback)
-	db.Callback().Update().Replace("gorm:update_time_stamp",updateTimeStampForUpdateCallback)
-	db.Callback().Delete().Replace("gorm:delete",deleteCallback)
+	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
+	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
+	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
 
 	db.DB().SetMaxIdleConns(databaseSetting.MaxIdleConns)
 	db.DB().SetMaxOpenConns(databaseSetting.MaxOpenConns)
@@ -54,11 +59,11 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 }
 
 //新增行为的回调
-func updateTimeStampForCreateCallback(scope *gorm.Scope){
+func updateTimeStampForCreateCallback(scope *gorm.Scope) {
 	if !scope.HasError() {
 		nowTime := time.Now().Unix()
 		//scope.FieldByName 获取档期是否包含所需字段
-		if createTimeField,ok := scope.FieldByName("CreatedOn");ok {
+		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
 			//IsBlank判断该字段是否为空
 			if createTimeField.IsBlank {
 				//如为空给该值设置值
@@ -66,7 +71,7 @@ func updateTimeStampForCreateCallback(scope *gorm.Scope){
 			}
 		}
 
-		if modifyTimeField,ok := scope.FieldByName("ModifiedOn");ok {
+		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
 			if modifyTimeField.IsBlank {
 				_ = modifyTimeField.Set(nowTime)
 			}
@@ -75,24 +80,24 @@ func updateTimeStampForCreateCallback(scope *gorm.Scope){
 }
 
 //更新的行为回调
-func updateTimeStampForUpdateCallback(scope *gorm.Scope)  {
+func updateTimeStampForUpdateCallback(scope *gorm.Scope) {
 	//scope.Get()来获取档期设置的标识gorm:update_column的值
-	if _,ok := scope.Get("gorm:update_column");ok{
+	if _, ok := scope.Get("gorm:update_column"); ok {
 		//如果没有设置update_column 则为ModifiedOn字段设置值
-		_  = scope.SetColumn("ModifiedOn",time.Now().Unix())
+		_ = scope.SetColumn("ModifiedOn", time.Now().Unix())
 	}
 }
 
 //删除的行为回调
-func deleteCallback(scope *gorm.Scope)  {
+func deleteCallback(scope *gorm.Scope) {
 	if !scope.HasError() {
 		var extraOption string
-		if str,ok := scope.Get("gorm:delete_option");ok {
+		if str, ok := scope.Get("gorm:delete_option"); ok {
 			extraOption = fmt.Sprint(str)
 		}
 
-		deletedOnField,hasDeletedField := scope.FieldByName("DeletedOn")
-		isDelField,hasIsDelField := scope.FieldByName("IsDel")
+		deletedOnField, hasDeletedField := scope.FieldByName("DeletedOn")
+		isDelField, hasIsDelField := scope.FieldByName("IsDel")
 		if !scope.Search.Unscoped && hasDeletedField && hasIsDelField {
 			now := time.Now().Unix()
 			scope.Raw(fmt.Sprintf(
@@ -105,12 +110,12 @@ func deleteCallback(scope *gorm.Scope)  {
 				scope.AddToVars(1),
 				addExtraSpaceIfExist(scope.CombinedConditionSql()),
 				addExtraSpaceIfExist(extraOption),
-				)).Exec()
+			)).Exec()
 		}
 	}
 }
 
-func addExtraSpaceIfExist(str string) string  {
+func addExtraSpaceIfExist(str string) string {
 	if str != "" {
 		return " " + str
 	}

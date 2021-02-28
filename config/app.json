@@ -15,9 +15,9 @@
   "Database": {
     "DBType": "mysql",
     "UserName": "root",
-    "Password": "7cba5a0efe956b28",
+    "Password": "root",
     "Host": "127.0.0.1:3306",
-    "DBName": "blog_service",
+    "DBName": "blog",
     "TablePrefix": "blog_",
     "Charset": "utf8",
     "ParseTime": true,
