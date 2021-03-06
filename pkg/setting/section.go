@@ -33,6 +33,13 @@ type DatabaseSettingS struct {
 	MaxOpenConns int
 }
 
+//JWT
+type JwtAuthSettings struct {
+	Issuer string
+	Secret string
+	Expire time.Duration
+}
+
 //读取对应节点的配置
 func (s *Setting) ReadSection(k string,v interface{}) error  {
 	err := s.vp.UnmarshalKey(k,v)

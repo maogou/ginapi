@@ -23,5 +23,10 @@
     "ParseTime": true,
     "MaxIdleConns": 10,
     "MaxOpenConns": 30
+  },
+  "JWT": {
+    "Secret": "maogou_sky",
+    "Issuer": "ginapi",
+    "Expire": 7200
   }
 }

@@ -13,6 +13,7 @@ var (
 	DatabaseSetting *setting.DatabaseSettingS
 	DBEngine *gorm.DB
 	Logger *logger.Logger
+	JwtSetting *setting.JwtAuthSettings
 )
 
 
