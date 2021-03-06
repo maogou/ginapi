@@ -62,23 +62,23 @@ func main() {
 
 //初始化配置
 func initSetting() error {
-	setting, err := setting.NewSetting()
+	appSetting, err := setting.NewSetting()
 
 	if err != nil {
 		return err
 	}
 
-	err = setting.ReadSection("Server", &global.ServeSetting)
+	err = appSetting.ReadSection("Server", &global.ServeSetting)
 	if err != nil {
 		return err
 	}
 
-	err = setting.ReadSection("App", &global.AppSetting)
+	err = appSetting.ReadSection("App", &global.AppSetting)
 	if err != nil {
 		return err
 	}
 
-	err = setting.ReadSection("Database", &global.DatabaseSetting)
+	err = appSetting.ReadSection("Database", &global.DatabaseSetting)
 	if err != nil {
 		return err
 	}
