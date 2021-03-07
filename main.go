@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/maogou/ginapi/app/model"
 	"github.com/maogou/ginapi/global"
@@ -10,6 +11,9 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -56,8 +60,31 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	//运行服务
-	serve.ListenAndServe()
+	//优雅的重启
+	go func() {
+		//运行服务
+		if err := serve.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("serve.ListenAndServe err: %#v", err)
+		}
+	}()
+
+	//等待信号中断
+	quit := make(chan os.Signal)
+	//接收syscall.SIGINT和syscall.SIGTERM信号
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutdown down server .....")
+
+	//最大时间控制,通知该服务端它有5秒的时间来处理原有的请求
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := serve.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown:%#v", err)
+	}
+
+	log.Println("Server exiting")
+
 }
 
 //初始化配置
@@ -83,7 +110,7 @@ func initSetting() error {
 		return err
 	}
 
-	err = appSetting.ReadSection("JWT",&global.JwtSetting)
+	err = appSetting.ReadSection("JWT", &global.JwtSetting)
 
 	if err != nil {
 		return err
