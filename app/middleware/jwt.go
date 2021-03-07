@@ -22,7 +22,7 @@ func Jwt() gin.HandlerFunc {
 		}
 
 		if token == "" {
-			ecode = errcode.InvalidParams
+			ecode = errcode.TokenInvalidParams
 		} else {
 			_, err := app.ParseToken(token)
 

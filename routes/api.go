@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	v1 "github.com/maogou/ginapi/app/handler/api/v1"
 	"github.com/maogou/ginapi/app/middleware"
+	"github.com/maogou/ginapi/global"
 
 	_ "github.com/maogou/ginapi/docs"
 	swaggerFiles "github.com/swaggo/files"
@@ -12,8 +13,15 @@ import (
 
 func NewRouter() *gin.Engine {
 	router := gin.New()
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
+
+	if global.ServeSetting.RunMode == "debug2" {
+		router.Use(gin.Logger())
+		router.Use(gin.Recovery())
+	} else {
+		router.Use(middleware.AccessLog())
+		router.Use(middleware.Recovery())
+	}
+
 	//使用多语言翻译(验证器)中间件
 	router.Use(middleware.Translations())
 
