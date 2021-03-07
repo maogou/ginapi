@@ -23,6 +23,7 @@ func NewRouter() *gin.Engine {
 
 	article := v1.Article{}
 	tag := v1.Tag{}
+	auth := v1.JwtAuth{}
 
 	v1 := router.Group("/api/v1")
 	{
@@ -45,6 +46,9 @@ func NewRouter() *gin.Engine {
 		v1.GET("/articles/:id", article.Get)
 		// 获取文章列表
 		v1.GET("/articles", article.List)
+
+		//jwt
+		v1.POST("/token", auth.GetAuth)
 	}
 
 	return router
