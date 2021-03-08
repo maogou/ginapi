@@ -12,10 +12,9 @@ func Recovery() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				global.Logger.WithCallersFrames().Errorf(c, "panic recover err: %#v", err)
+				app.NewResponse(c).ToErrorResponse(errcode.ServerError)
+				c.Abort()
 			}
-
-			app.NewResponse(c).ToErrorResponse(errcode.ServerError)
-			c.Abort()
 		}()
 
 		c.Next()

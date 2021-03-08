@@ -40,7 +40,8 @@ func AccessLog() gin.HandlerFunc {
 
 		global.Logger.WithFields(fields).Infof(
 			c,
-			"access log: %s, status_code: %d, begin_time: %d, end_time: %d",
+			"access_log: url: %s, method: %s, status_code: %d, begin_time: %d, end_time: %d",
+			c.Request.RequestURI,
 			c.Request.Method,
 			bodyWriter.Status(),
 			beginTime,
