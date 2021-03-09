@@ -1,8 +1,14 @@
+<p align="center"><img src="https://github.com/maogou/ginapi/blob/master/docs/ginapi.gif" width="256px"/></p> 
+
+
 ### GinApi项目目录说明
 
 - app 主要存放控制器-model-模板-service等
     - handler 相当于控制器
     - middleware 中间件
+        - jwt中间件验证token
+        - recovery中间恢复异常
+        - access_log 请求上下文日志记录
     - model 模型 
         - 更多用法 https://gorm.io/zh_CN/ 
         - Model 指定运行DB操作模型实例,默认解析该结构体的名字为表名,格式大写驼峰转小写下划线驼峰,也可以使用TableName方法手动指定表名
