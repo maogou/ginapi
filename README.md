@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/maogou/ginapi/blob/master/docs/ginapi.gif" width="256px"/></p> 
+<p align="center"><img src="https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/44862c768630f9eee53e4d4d3c55f037f78859affb6468ff8b7099a6857801fce9cde238aea17f8da22fc1107eef3766?pictype=scale&from=30013&version=3.3.3.3&uin=572768614&fname=ginapi.png&size=1024"/></p> 
 
 
 ### GinApi项目目录说明
