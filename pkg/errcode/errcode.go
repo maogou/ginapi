@@ -44,20 +44,20 @@ func (e *Error) Msg() string {
 }
 
 //格式化错误信息
-func (e *Error)Msgf(args []interface{}) string  {
-	return fmt.Sprintf(e.msg,args...)
+func (e *Error) Msgf(args []interface{}) string {
+	return fmt.Sprintf(e.msg, args...)
 }
 
 //获取错误详细信息
-func (e *Error) Details() []string  {
+func (e *Error) Details() []string {
 	return e.details
 }
 
 //追加详细错误信息
-func (e *Error)WithDetail(detail ...string) *Error  {
+func (e *Error) WithDetail(detail ...string) *Error {
 	e.details = []string{}
-	for _,d := range detail{
-		e.details = append(e.details,d)
+	for _, d := range detail {
+		e.details = append(e.details, d)
 	}
 
 	return e
@@ -71,7 +71,11 @@ func (e *Error) StatusCode() int {
 	case ServerError.Code():
 		return http.StatusInternalServerError
 	case InvalidParams.Code():
-		return http.StatusBadRequest
+		return http.StatusPaymentRequired
+	case NotFound.Code():
+		return http.StatusNotFound
+	case MethodNotAllow.Code():
+		return http.StatusMethodNotAllowed
 	case UnauthorizedAuthNotExist.Code():
 		fallthrough
 	case UnauthorizedTokenError.Code():

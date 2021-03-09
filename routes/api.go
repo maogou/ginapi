@@ -2,11 +2,11 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/maogou/ginapi/app/handler/api/common"
 	v1 "github.com/maogou/ginapi/app/handler/api/v1"
 	"github.com/maogou/ginapi/app/middleware"
-	"github.com/maogou/ginapi/global"
-
 	_ "github.com/maogou/ginapi/docs"
+	"github.com/maogou/ginapi/global"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -29,9 +29,14 @@ func NewRouter() *gin.Engine {
 	//url := ginSwagger.URL("http://127.0.0.1:8080/swagger/doc.json")
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	intercept := common.Intercept{}
 	article := v1.Article{}
 	tag := v1.Tag{}
 	auth := v1.JwtAuth{}
+
+	//拦截404 & 405统一响应数据结构
+	router.NoRoute(intercept.Intercept404)
+	router.NoMethod(intercept.Intercept405)
 
 	//不需要鉴权的路由
 	router.POST("/api/v1/token", auth.GetAuth)
