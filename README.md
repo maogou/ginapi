@@ -1,4 +1,4 @@
-<p align="center"><a href="https://juluzhizhan.com" target="_blank"><img src="https://github.com/maogou/ginapi/blob/develop/docs/ginapi.png" width="400"></a></p>
+<p align="center"><a href="https://juluzhizhan.com" target="_blank"><img src="https://github.com/maogou/ginapi/blob/develop/docs/ginapi.png" width="150"></a></p>
 
 ### GinApi项目目录说明
 
