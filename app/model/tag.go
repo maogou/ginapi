@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/maogou/ginapi/pkg/app"
+	"gorm.io/gorm"
 )
 
 type Tag struct {
@@ -23,8 +23,8 @@ type TagSwagger struct {
 }
 
 //查询tag的总条数
-func (t Tag) Count(db *gorm.DB) (int, error) {
-	var count int
+func (t Tag) Count(db *gorm.DB) (int64, error) {
+	var count int64
 	if t.Name != "" {
 		db = db.Where("name = ?", t.Name)
 	}

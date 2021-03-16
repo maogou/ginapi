@@ -78,7 +78,7 @@ func (svc *Service) GetArticle(param *ArticleRequest) (*Article, error) {
 	}, nil
 }
 
-func (svc *Service) GetArticleList(param *ArticleListRequest, pager *app.Page) ([]*Article, int, error) {
+func (svc *Service) GetArticleList(param *ArticleListRequest, pager *app.Page) ([]*Article, int64, error) {
 	articleCount, err := svc.dao.CountArticleListByTagID(param.TagID, param.State)
 	if err != nil {
 		return nil, 0, err

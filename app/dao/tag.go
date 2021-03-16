@@ -19,7 +19,7 @@ func (d *Dao) CreateTag(name string, state uint8, createdBy string) error {
 }
 
 //标签总数
-func (d *Dao) CountTag(name string, state uint8) (int, error) {
+func (d *Dao) CountTag(name string, state uint8) (int64, error) {
 	tag := model.Tag{
 		Name:  name,
 		State: state,

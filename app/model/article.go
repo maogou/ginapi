@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/maogou/ginapi/pkg/app"
+	"gorm.io/gorm"
 )
 
 type Article struct {
@@ -106,8 +106,8 @@ func (a Article) ListByTagId(db *gorm.DB, tagID uint32, pageOffset, pageSize int
 	return articles, nil
 }
 
-func (a Article) CountByTagID(db *gorm.DB, tagID uint32) (int, error) {
-	var count int
+func (a Article) CountByTagID(db *gorm.DB, tagID uint32) (int64, error) {
+	var count int64
 	err := db.Table(ArticleTag{}.TableName()+" AS at").Joins("LEFT JOIN `"+Tag{}.TableName()+"` AS t ON at.tag_id = t.id").Joins("LEFT JOIN `"+Article{}.TableName()+"` AS ar ON at.article_id = ar.id").Where("at.tag_id =? AND ar.state = ? AND is_del = ?", tagID, a.State, 0).Count(&count).Error
 	if err != nil {
 		return 0, nil

@@ -84,7 +84,7 @@ func (d *Dao) DeleteArticle(id uint32) error {
 	return article.Delete(d.engine)
 }
 
-func (d *Dao) CountArticleListByTagID(id uint32, state uint8) (int, error) {
+func (d *Dao) CountArticleListByTagID(id uint32, state uint8) (int64, error) {
 	article := model.Article{
 		State: state,
 	}

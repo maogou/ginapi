@@ -2,10 +2,12 @@ package model
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/maogou/ginapi/global"
 	"github.com/maogou/ginapi/pkg/setting"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
+	"os"
 	"time"
 )
 
@@ -27,7 +29,8 @@ type Model struct {
 
 //实例化db
 func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
-	db, err := gorm.Open(databaseSetting.DBType, fmt.Sprintf(
+
+	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local",
 		databaseSetting.UserName,
 		databaseSetting.Password,
@@ -35,90 +38,34 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 		databaseSetting.DBName,
 		databaseSetting.Charset,
 		databaseSetting.ParseTime,
-	))
+	)
+
+	mysqlConfig := mysql.Config{
+		DSN:                       dsn,   // DSN data source name
+		DefaultStringSize:         255,   // string 类型字段的默认长度
+		DisableDatetimePrecision:  true,  // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
+		DontSupportRenameIndex:    true,  // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
+		DontSupportRenameColumn:   true,  // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
+		SkipInitializeWithVersion: false, // 根据版本自动配置
+	}
+
+	sqlLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Second, // 慢 SQL 阈值
+			LogLevel:      logger.Info, // Log level
+			Colorful:      true,        // 启用彩色打印
+		},
+	)
+
+	db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{
+		Logger:                                   sqlLogger,
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	//开启sql日志
-	if global.ServeSetting.RunMode == "debug" {
-		db.LogMode(true)
-	}
-
-	db.SingularTable(true)
-	//替换现有回调的顺序
-	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
-	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
-	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
-
-	db.DB().SetMaxIdleConns(databaseSetting.MaxIdleConns)
-	db.DB().SetMaxOpenConns(databaseSetting.MaxOpenConns)
-
 	return db, nil
-}
-
-//新增行为的回调
-func updateTimeStampForCreateCallback(scope *gorm.Scope) {
-	if !scope.HasError() {
-		nowTime := time.Now().Unix()
-		//scope.FieldByName 获取档期是否包含所需字段
-		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
-			//IsBlank判断该字段是否为空
-			if createTimeField.IsBlank {
-				//如为空给该值设置值
-				_ = createTimeField.Set(nowTime)
-			}
-		}
-
-		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
-			if modifyTimeField.IsBlank {
-				_ = modifyTimeField.Set(nowTime)
-			}
-		}
-	}
-}
-
-//更新的行为回调
-func updateTimeStampForUpdateCallback(scope *gorm.Scope) {
-	//scope.Get()来获取档期设置的标识gorm:update_column的值
-	if _, ok := scope.Get("gorm:update_column"); ok {
-		//如果没有设置update_column 则为ModifiedOn字段设置值
-		_ = scope.SetColumn("ModifiedOn", time.Now().Unix())
-	}
-}
-
-//删除的行为回调
-func deleteCallback(scope *gorm.Scope) {
-	if !scope.HasError() {
-		var extraOption string
-		if str, ok := scope.Get("gorm:delete_option"); ok {
-			extraOption = fmt.Sprint(str)
-		}
-
-		deletedOnField, hasDeletedField := scope.FieldByName("DeletedOn")
-		isDelField, hasIsDelField := scope.FieldByName("IsDel")
-		if !scope.Search.Unscoped && hasDeletedField && hasIsDelField {
-			now := time.Now().Unix()
-			scope.Raw(fmt.Sprintf(
-				"UPDATE %v SET %v=%v,%v=%v%v%v",
-				//获取当前的表名
-				scope.QuotedTableName(),
-				scope.Quote(deletedOnField.DBName),
-				scope.AddToVars(now),
-				scope.Quote(isDelField.DBName),
-				scope.AddToVars(1),
-				addExtraSpaceIfExist(scope.CombinedConditionSql()),
-				addExtraSpaceIfExist(extraOption),
-			)).Exec()
-		}
-	}
-}
-
-func addExtraSpaceIfExist(str string) string {
-	if str != "" {
-		return " " + str
-	}
-
-	return str
 }

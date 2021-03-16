@@ -39,7 +39,7 @@ type TagListRequest struct {
 }
 
 //标签总数
-func (service Service) CountTag(param *CountTagRequest) (int, error) {
+func (service Service) CountTag(param *CountTagRequest) (int64, error) {
 	return service.dao.CountTag(param.Name, param.State)
 }
 

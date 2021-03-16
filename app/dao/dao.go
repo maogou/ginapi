@@ -1,6 +1,6 @@
 package dao
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 //对数据层封装基类
 type Dao struct {
@@ -8,7 +8,7 @@ type Dao struct {
 }
 
 //实例化dao
-func New(engine *gorm.DB) *Dao  {
+func New(engine *gorm.DB) *Dao {
 	return &Dao{
 		engine: engine,
 	}
