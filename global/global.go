@@ -14,4 +14,5 @@ var (
 	DBEngine        *gorm.DB
 	Logger          *logger.Logger
 	JwtSetting      *setting.JwtAuthSettings
+	ZapLogSetting   *setting.ZapLogSettings
 )

@@ -28,5 +28,16 @@
     "Secret": "maogou_sky",
     "Issuer": "ginapi",
     "Expire": 7200
+  },
+  "Zap": {
+    "Level": "info",
+    "Format": "console",
+    "Prefix": "gin_api",
+    "Director": "logs",
+    "LinkName": "latest_log",
+    "ShowLine": true,
+    "StacktraceKey": "stacktrace",
+    "EncodeLevel": "LowercaseColorLevelEncoder",
+    "LogInConsole":true
   }
 }

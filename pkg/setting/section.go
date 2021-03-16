@@ -12,11 +12,11 @@ type ServerSettingS struct {
 
 //应用
 type AppSettingS struct {
-	DefaultPageSize       int
-	MaxPageSize           int
-	LogSavePath           string
-	LogFileName           string
-	LogFileExt            string
+	DefaultPageSize int
+	MaxPageSize     int
+	LogSavePath     string
+	LogFileName     string
+	LogFileExt      string
 }
 
 //数据库
@@ -40,9 +40,22 @@ type JwtAuthSettings struct {
 	Expire time.Duration
 }
 
+//Zap Log
+type ZapLogSettings struct {
+	Level         string
+	Format        string
+	Prefix        string
+	Director      string
+	LinkName      string
+	ShowLine      bool
+	EncodeLevel   string
+	StacktraceKey string
+	LogInConsole  bool
+}
+
 //读取对应节点的配置
-func (s *Setting) ReadSection(k string,v interface{}) error  {
-	err := s.vp.UnmarshalKey(k,v)
+func (s *Setting) ReadSection(k string, v interface{}) error {
+	err := s.vp.UnmarshalKey(k, v)
 
 	if err != nil {
 		return err

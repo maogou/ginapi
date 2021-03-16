@@ -116,6 +116,11 @@ func initSetting() error {
 		return err
 	}
 
+	err = appSetting.ReadSection("Zap", &global.ZapLogSetting)
+	if err != nil {
+		return err
+	}
+
 	global.ServeSetting.ReadTimeout *= time.Second
 	global.ServeSetting.WriteTimeout *= time.Second
 	global.JwtSetting.Expire *= time.Second
