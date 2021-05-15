@@ -147,7 +147,7 @@ func initLogger() error {
 		MaxSize:   600,  //600M
 		MaxAge:    10,   //10天
 		LocalTime: true, //使用本地时间格式
-	}, "", log.LstdFlags).WithCaller(2)
+	})
 
 	return nil
 }

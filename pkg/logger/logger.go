@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"io"
-	"log"
+	"os"
 	"runtime"
 	"time"
 )
@@ -44,15 +46,30 @@ func (l Level) String() string {
 }
 
 type Logger struct {
-	newLogger *log.Logger
+	newLogger *zap.Logger
 	ctx       context.Context
 	level     Level
 	fields    Fields
 	callers   []string
 }
 
-func NewLogger(w io.Writer, prefix string, flag int) *Logger {
-	l := log.New(w, prefix, flag)
+func NewLogger(w io.Writer) *Logger {
+	var encoderCfg zapcore.EncoderConfig
+	encoderCfg = zap.NewProductionEncoderConfig()
+	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+
+	core := zapcore.NewCore(
+		zapcore.NewJSONEncoder(encoderCfg),                                           // 编码器配置
+		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(w)), // 打印到控制台和文件
+		zap.NewAtomicLevel(), // 日志级别
+	)
+	// 开启开发模式，堆栈跟踪
+	caller := zap.AddCaller()
+	// 开启文件及行号
+	development := zap.Development()
+	callSkip := zap.AddCallerSkip(2)
+	// 构造日志
+	l := zap.New(core, caller, development, callSkip)
 
 	return &Logger{newLogger: l}
 }
@@ -147,13 +164,13 @@ func (l *Logger) Output(level Level, message string) {
 	content := string(body)
 	switch level {
 	case LevelDebug:
-		l.newLogger.Print(content)
+		l.newLogger.Debug(content)
 	case LevelInfo:
-		l.newLogger.Print(content)
+		l.newLogger.Info(content)
 	case LevelWarn:
-		l.newLogger.Print(content)
+		l.newLogger.Warn(content)
 	case LevelError:
-		l.newLogger.Print(content)
+		l.newLogger.Error(content)
 	case LevelFatal:
 		l.newLogger.Fatal(content)
 	case LevelPanic:
@@ -174,6 +191,7 @@ func (l *Logger) Info(ctx context.Context, v ...interface{}) {
 }
 
 func (l *Logger) Infof(ctx context.Context, format string, v ...interface{}) {
+	fmt.Println("dao nli qu ")
 	l.WithContext(ctx).Output(LevelInfo, fmt.Sprintf(format, v...))
 }
 

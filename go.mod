@@ -26,6 +26,8 @@ require (
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
+	go.uber.org/multierr v1.7.0 // indirect
+	go.uber.org/zap v1.16.0
 	golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a // indirect
 	golang.org/x/tools v0.0.0-20200831203904-5a2aa26beb65 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
