@@ -30,6 +30,10 @@
     "Expire": 7200
   },
   "Zap": {
+    "Development":false,
+    "LogSavePath": "storage/logs",
+    "LogFileName": "app",
+    "LogFileExt": ".log",
     "Level": "info",
     "Format": "console",
     "Prefix": "gin_api",
@@ -38,6 +42,9 @@
     "ShowLine": true,
     "StacktraceKey": "stacktrace",
     "EncodeLevel": "LowercaseColorLevelEncoder",
+    "MaxSize":128,
+    "MaxAge":7,
+    "MaxBackups":31,
     "LogInConsole":true
   }
 }

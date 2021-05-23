@@ -2,7 +2,7 @@ package setting
 
 import "time"
 
-//服务
+//ServerSettingS 服务
 type ServerSettingS struct {
 	RunMode      string
 	HttpPort     string
@@ -10,7 +10,7 @@ type ServerSettingS struct {
 	WriteTimeout time.Duration
 }
 
-//应用
+//AppSettingS 应用
 type AppSettingS struct {
 	DefaultPageSize int
 	MaxPageSize     int
@@ -19,7 +19,7 @@ type AppSettingS struct {
 	LogFileExt      string
 }
 
-//数据库
+//DatabaseSettingS 数据库
 type DatabaseSettingS struct {
 	DBType       string
 	UserName     string
@@ -33,27 +33,34 @@ type DatabaseSettingS struct {
 	MaxOpenConns int
 }
 
-//JWT
+//JwtAuthSettings jwt
 type JwtAuthSettings struct {
 	Issuer string
 	Secret string
 	Expire time.Duration
 }
 
-//Zap Log
+//ZapLogSettings Zap-Log
 type ZapLogSettings struct {
-	Level         string
-	Format        string
-	Prefix        string
-	Director      string
-	LinkName      string
-	ShowLine      bool
-	EncodeLevel   string
-	StacktraceKey string
-	LogInConsole  bool
+	Development     bool
+	LogSavePath     string
+	LogFileName     string
+	LogFileExt      string
+	Level           string
+	Format          string
+	Prefix          string
+	Director        string
+	LinkName        string
+	ShowLine        bool
+	EncodeLevel     string
+	StacktraceKey   string
+	LogInConsole    bool
+	MaxSize         int
+	MaxAge          int
+	MaxBackups      int
 }
 
-//读取对应节点的配置
+//ReadSection 读取对应节点的配置
 func (s *Setting) ReadSection(k string, v interface{}) error {
 	err := s.vp.UnmarshalKey(k, v)
 

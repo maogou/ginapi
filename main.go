@@ -8,7 +8,6 @@ import (
 	"github.com/maogou/ginapi/pkg/logger"
 	"github.com/maogou/ginapi/pkg/setting"
 	"github.com/maogou/ginapi/routes"
-	"gopkg.in/natefinch/lumberjack.v2"
 	"log"
 	"net/http"
 	"os"
@@ -142,12 +141,7 @@ func initDBEngine() error {
 
 //初始化日志服务
 func initLogger() error {
-	global.Logger = logger.NewLogger(&lumberjack.Logger{
-		Filename:  global.AppSetting.LogSavePath + "/" + global.AppSetting.LogFileName + global.AppSetting.LogFileExt,
-		MaxSize:   600,  //600M
-		MaxAge:    10,   //10天
-		LocalTime: true, //使用本地时间格式
-	})
+	global.Logger = logger.NewLogger(global.ZapLogSetting)
 
 	return nil
 }

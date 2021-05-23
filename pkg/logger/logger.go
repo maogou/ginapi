@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/maogou/ginapi/pkg/setting"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"io"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
 	"runtime"
 	"time"
@@ -46,21 +47,41 @@ func (l Level) String() string {
 }
 
 type Logger struct {
-	newLogger *zap.Logger
+	newLogger *zap.SugaredLogger
 	ctx       context.Context
 	level     Level
 	fields    Fields
 	callers   []string
 }
 
-func NewLogger(w io.Writer) *Logger {
+func NewLogger(zapLogSetting *setting.ZapLogSettings) *Logger {
 	var encoderCfg zapcore.EncoderConfig
 	encoderCfg = zap.NewProductionEncoderConfig()
 	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
 
+	lumberjack := &lumberjack.Logger{
+		Filename:  zapLogSetting.LogSavePath + "/" + zapLogSetting.LogFileName + zapLogSetting.LogFileExt,
+		MaxSize:   zapLogSetting.MaxSize,  //600M
+		MaxAge:    zapLogSetting.MaxAge,   //10天
+		MaxBackups: zapLogSetting.MaxBackups, //最多保留天数
+		LocalTime: true, //使用本地时间格式
+		Compress: false,//不压缩旧文件
+	}
+
+	var writeSyncer zapcore.WriteSyncer
+
+	if zapLogSetting.Development {
+		//开发环境打印到控制台
+		writeSyncer = zapcore.AddSync(os.Stdout)
+	} else {
+		//线上环境写入到文件中
+		writeSyncer = zapcore.AddSync(lumberjack)
+	}
+
 	core := zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),                                           // 编码器配置
-		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(w)), // 打印到控制台和文件
+		// 编码器配置
+		zapcore.NewJSONEncoder(encoderCfg),
+		zapcore.NewMultiWriteSyncer(zapcore.AddSync(writeSyncer)), // 打印到控制台和文件
 		zap.NewAtomicLevel(), // 日志级别
 	)
 	// 开启开发模式，堆栈跟踪
@@ -71,7 +92,7 @@ func NewLogger(w io.Writer) *Logger {
 	// 构造日志
 	l := zap.New(core, caller, development, callSkip)
 
-	return &Logger{newLogger: l}
+	return &Logger{newLogger: l.Sugar()}
 }
 
 func (l *Logger) clone() *Logger {
@@ -191,7 +212,6 @@ func (l *Logger) Info(ctx context.Context, v ...interface{}) {
 }
 
 func (l *Logger) Infof(ctx context.Context, format string, v ...interface{}) {
-	fmt.Println("dao nli qu ")
 	l.WithContext(ctx).Output(LevelInfo, fmt.Sprintf(format, v...))
 }
 
